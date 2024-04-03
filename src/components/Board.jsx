@@ -2,33 +2,34 @@ import Strike from "./Strike";
 import Tile from "./Tile";
 
 function Board({ tiles, onTileClick, playerTurn, strikeClass }) {
-  // Funzione per rendere un singolo Tile
-  const renderTile = (index, classNames = "") => (
-    <Tile
-      key={index}
-      playerTurn={playerTurn}
-      onClick={() => onTileClick(index)}
-      value={tiles[index]}
-      className={classNames}
-    />
-  );
+  // Funzione per generare dinamicamente le caselle del tabellone
+  const renderTiles = () => {
+    const tileComponents = [];
+
+    for (let i = 0; i < 9; i++) {
+      let classNames = "";
+
+      // Aggiunge le classi per i bordi delle caselle
+      if (i % 3 !== 2) classNames += "right-border ";
+      if (Math.floor(i / 3) !== 2) classNames += "bottom-border ";
+
+      tileComponents.push(
+        <Tile
+          key={i}
+          playerTurn={playerTurn}
+          onClick={() => onTileClick(i)}
+          value={tiles[i]}
+          className={classNames.trim()}
+        />
+      );
+    }
+
+    return tileComponents;
+  };
 
   return (
     <div className="board">
-      {[0, 1, 2].map((riga) => (
-        <div key={riga} className="riga-board">
-          {[0, 1, 2].map((colonna) => {
-            const index = riga * 3 + colonna;
-            let classNames = "";
-            // Aggiunge la classe per il bordo inferiore se non è l'ultima riga
-            if (riga < 2) classNames += "bordo-inferiore ";
-            // Aggiunge la classe per il bordo destro se non è l'ultima colonna
-            if (colonna < 2) classNames += "bordo-destro ";
-            // Rende il Tile con le classi dei bordi
-            return renderTile(index, classNames.trim());
-          })}
-        </div>
-      ))}
+      {renderTiles()}
       <Strike strikeClass={strikeClass} />
     </div>
   );
